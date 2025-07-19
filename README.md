@@ -35,24 +35,31 @@ A comprehensive web application for discovering, managing, and planning visits t
 
 ## 🛠️ Tech Stack
 
-### Frontend
-- **React 18.2.0** - Modern UI library
-- **Bootstrap 5.3.1** - Responsive CSS framework
-- **Axios 1.5.0** - HTTP client for API calls
-- **LocationIQ API** - Location search and autocomplete
+### 🖥️ Frontend
+React 18.2.0 – Component-based UI library for building dynamic interfaces
+Bootstrap 5.3.1 – Responsive CSS framework for layout and styling
+Axios 1.5.0 – Promise-based HTTP client for RESTful API communication
+LocationIQ API – Geolocation API for location autocomplete and place data
 
-### Backend
-- **Node.js** - JavaScript runtime
-- **Express 4.18.2** - Web application framework
-- **MongoDB** - NoSQL database
-- **Mongoose 7.5.0** - MongoDB object modeling
-- **CORS 2.8.5** - Cross-origin resource sharing
-- **dotenv 16.3.1** - Environment variable management
+### 🛠️ Backend
+Node.js – JavaScript runtime for server-side development
+Express 4.18.2 – Lightweight web framework for building REST APIs
+MongoDB – NoSQL document database to store tourist spot data
+Mongoose 7.5.0 – ODM for MongoDB to manage schemas and models
+CORS 2.8.5 – Middleware to handle cross-origin requests
+dotenv 16.3.1 – Environment variable configuration
 
-### Development Tools
-- **Nodemon 3.0.1** - Development server auto-restart
-- **Concurrently 8.2.0** - Run multiple commands simultaneously
-- **React Scripts 5.0.1** - Create React App build tools
+### 🤖 AI & Automation (n8n Workflow)
+n8n (Self-hosted) – Low-code automation platform integrated with backend
+Webhook Trigger – Receives input from website form submission
+OpenAI GPT API – Generates personalized, context-aware travel itineraries
+Email Node – Automatically sends the generated itinerary to the user’s email
+Fully automated from form submission to itinerary generation and delivery
+
+### ⚙️ Development Tools
+Nodemon 3.0.1 – Auto-restarts backend server on file changes
+Concurrently 8.2.0 – Runs frontend and backend servers in parallel
+React Scripts 5.0.1 – Build and development tools for React
 
 ## 📋 Prerequisites
 
