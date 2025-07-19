@@ -51,10 +51,10 @@ A comprehensive web application for discovering, managing, and planning visits t
 
 ### 🤖 AI & Automation (n8n Workflow)
 - **n8n (Self-hosted)** – Low-code automation platform integrated with backend:
-    -**Webhook Trigger** – Receives input from website form submission
-    -**OpenAI GPT API** – Generates personalized, context-aware travel itineraries
-    -**Email Node** – Automatically sends the generated itinerary to the user’s email
-    -Fully automated from form submission to itinerary generation and delivery
+    - **Webhook Trigger** – Receives input from website form submission
+    - **OpenAI GPT API** – Generates personalized, context-aware travel itineraries
+    - **Email Node** – Automatically sends the generated itinerary to the user’s email
+    - Fully automated from form submission to itinerary generation and delivery
 
 ### ⚙️ Development Tools
 Nodemon 3.0.1 – Auto-restarts backend server on file changes
