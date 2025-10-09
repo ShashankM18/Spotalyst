@@ -1,0 +1,390 @@
+{
+  "name": "Spot itinerary",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "generate-plan",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        176,
+        288
+      ],
+      "id": "d70acca0-d42b-4a59-9ff6-c62a4b09c924",
+      "name": "Webhook1",
+      "webhookId": "d2db56c7-03e9-44e7-9472-1b6f186026d2"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Webhook1').item.json.body.email }} ",
+        "subject": "Your spot itinerary!",
+        "emailType": "text",
+        "message": "={{ $json.message.content.plan }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1424,
+        288
+      ],
+      "id": "000b0770-937a-4b85-b5e2-ad1cc84c2c69",
+      "name": "Send a message1",
+      "webhookId": "caa2d0e7-d020-4908-a410-f4429b49f442",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "etnUb8bab3USO4wk",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "markdownToHtml",
+        "markdown": "={{ $json.formattedText }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        288
+      ],
+      "id": "ca4b0c4b-a8d2-4121-92b0-76f1e5ce5e0c",
+      "name": "Markdown1"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are an intelligent local travel guide",
+              "role": "system"
+            },
+            {
+              "content": "I am building a \"smart spot explorer\" platform integrated with AI. Your task is to give a local itinerary(plan) of the places nearby the specified location. The plan should include fun activities, food/restaurant, shopping, and any other spots/activities that are must to explore nearby. \n\nThe output should be specific and clear with estimated money to be spent and time taken. Give the output as a list which can easily understood and followed by the tourist.\nThe exploration time should be strictly as mentioned in input in hours.\nDont include email anywhere in the plan. \nOutput should be in JSON format as a list of each destination.\n\nTake the following inputs for executing the given task.\n"
+            },
+            {
+              "content": "={\n\"Place name\": \"{{ $json.body.name }}\",\n\"City\": \"{{ $json.body.city }}\",\n\"Start time\": \"{{ $json.body.startTime }}\",\n\"Total duration of exploration\": \"{{ $json.body.recommendedTime }}hours\",\n\"Type of group\": \"{{ $json.body.targetAudience }}\",\n\"Email\":\"{{ $json.body.email }}\",\n\"Additional Information\": \"{{ $json.body.description }}\"\n}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        400,
+        288
+      ],
+      "id": "b1699966-eb61-4832-a068-533fd0f79ade",
+      "name": "Extract an itinerary1",
+      "credentials": {
+        "openAiApi": {
+          "id": "uHrB2B9Fdq0iaa1A",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "Your an intelligent text assistant",
+              "role": "system"
+            },
+            {
+              "content": "I am building a smart spot exploration platform. Your task is to take the  input JSON object consisting of a local travel itinerary and convert it into text format.\nThe text should be easily understandable for the tourists.\nFormat it in a beautiful and simple way.\nKeep in mind that the generated text is directly sent to the tourist or traveller without any overview.\n\nOutput should solely be the following JSON format:\n{\"plan\":\"the generated text\"}\n\nFormat the output in an appealing way.\nPut in serial no. for each destination.\nKeep the destination name in bold letters.\n\nThe following is the input JSON object:"
+            },
+            {
+              "content": "={{ [ { \"type\": \"text\", \"text\": JSON.stringify($json.message.content) } ] }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        800,
+        288
+      ],
+      "id": "140febe7-55e2-4916-9625-612b04ff3aba",
+      "name": "Format itinerary1",
+      "credentials": {
+        "openAiApi": {
+          "id": "uHrB2B9Fdq0iaa1A",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"plan\": {{ JSON.stringify( $('Format itinerary1').item.json.message.content.plan ) }}\n\n\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1648,
+        288
+      ],
+      "id": "913a23f2-b0f9-4ca3-851d-7aba800096b5",
+      "name": "Return1"
+    }
+  ],
+  "pinData": {
+    "Webhook1": [
+      {
+        "json": {
+          "headers": {
+            "host": "openagent01.app.n8n.cloud",
+            "user-agent": "axios/1.10.0",
+            "content-length": "268",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, br",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "152.57.149.153",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "IN",
+            "cf-ray": "95d98128543240b4-SIN",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json",
+            "x-forwarded-for": "152.57.149.153, 162.158.106.203",
+            "x-forwarded-host": "openagent01.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-38-6f9f659dd9-bmkxt",
+            "x-is-trusted": "yes",
+            "x-real-ip": "152.57.149.153"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "name": "Narasapuram",
+            "city": "Narasapur",
+            "type": "Heritage",
+            "recommendedTime": 8,
+            "targetAudience": [
+              "Solo Travelers"
+            ],
+            "description": "include Mission Hospital,Jyothi Printing Press, Taylor High School and YN college",
+            "email": "srikrishna1817@gmail.com",
+            "startTime": "10:00"
+          },
+          "webhookUrl": "https://openagent01.app.n8n.cloud/webhook/generate-plan",
+          "executionMode": "production"
+        }
+      }
+    ],
+    "Markdown1": [
+      {
+        "json": {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": {
+              "plan": "1. **Mission Hospital**\n   • Time: 10:00 - 10:30\n   • Activity: Explore this iconic heritage site, noted for its beautiful architecture and deep community impact. Perfect spot for photos and learning about local history.\n   • Expense: Free\n   • Time Spent: 30 mins\n\n2. **Jyothi Printing Press**\n   • Time: 10:30 - 11:15\n   • Activity: Discover traditional printing techniques and understand how local businesses like Jyothi Printing Press contributed to Narasapuram’s growth. (Consider picking up a souvenir print!)\n   • Expense: ₹50 (for a souvenir print)\n   • Time Spent: 45 mins\n\n3. **Taylor High School**\n   • Time: 11:15 - 12:15\n   • Activity: Stroll around and admire the vintage architecture of this historic school, a glimpse into the town's educational legacy. (Visitors are allowed outside the building.)\n   • Expense: Free\n   • Time Spent: 1 hour\n\n4. **Lunch at Sri Krishna Family Restaurant**\n   • Time: 12:15 - 13:30\n   • Activity: Treat yourself to authentic Andhra dishes like fish curry, prawns fry, and a traditional thali in a popular local restaurant.\n   • Expense: ₹300\n   • Time Spent: 1 hour 15 mins\n\n5. **YN College Campus & Park**\n   • Time: 13:30 - 15:00\n   • Activity: Enjoy a leisurely walk on the YN College campus and relax in the park. Great spot to watch everyday student life and soak up the atmosphere.\n   • Expense: Free\n   • Time Spent: 1 hour 30 mins\n\n6. **Local Handicrafts Market**\n   • Time: 15:00 - 16:30\n   • Activity: Experience live lace-making at the famous Narasapuram Lace & Handicrafts Market. Shop for unique handcrafted souvenirs.\n   • Expense: ₹500 (for souvenirs)\n   • Time Spent: 1 hour 30 mins\n\n7. **Coffee Break at Sarovar Tea and Snacks**\n   • Time: 16:30 - 17:15\n   • Activity: Take a break with a cup of chai or South Indian coffee, and sample local snacks such as Mirchi bajji.\n   • Expense: ₹80\n   • Time Spent: 45 mins\n\n8. **Perupalem Beach (Quick Visit)**\n   • Time: 17:15 - 18:00\n   • Activity: Wrap up your day with a refreshing trip to Perupalem Beach. Enjoy the sunset and coastal winds on the beautiful shoreline just outside town.\n   • Expense: ₹200 (auto/ride-share)\n   • Time Spent: 45 mins\n\nTotal Estimated Expense: ₹1130 (excluding optional shopping)\n\nNote: All spots are located within Narasapuram and are ideal for solo travellers. Convenient local transportation (like auto-rickshaws) is available throughout your day."
+            },
+            "refusal": null,
+            "annotations": []
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      }
+    ],
+    "Format itinerary1": [
+      {
+        "json": {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": {
+              "plan": "1. **Mission Hospital**\n   • Time: 10:00 - 10:30\n   • Activity: Explore this iconic heritage site, noted for its beautiful architecture and deep community impact. Perfect spot for photos and learning about local history.\n   • Expense: Free\n   • Time Spent: 30 mins\n\n2. **Jyothi Printing Press**\n   • Time: 10:30 - 11:15\n   • Activity: Discover traditional printing techniques and understand how local businesses like Jyothi Printing Press contributed to Narasapuram’s growth. (Consider picking up a souvenir print!)\n   • Expense: ₹50 (for a souvenir print)\n   • Time Spent: 45 mins\n\n3. **Taylor High School**\n   • Time: 11:15 - 12:15\n   • Activity: Stroll around and admire the vintage architecture of this historic school, a glimpse into the town's educational legacy. (Visitors are allowed outside the building.)\n   • Expense: Free\n   • Time Spent: 1 hour\n\n4. **Lunch at Sri Krishna Family Restaurant**\n   • Time: 12:15 - 13:30\n   • Activity: Treat yourself to authentic Andhra dishes like fish curry, prawns fry, and a traditional thali in a popular local restaurant.\n   • Expense: ₹300\n   • Time Spent: 1 hour 15 mins\n\n5. **YN College Campus & Park**\n   • Time: 13:30 - 15:00\n   • Activity: Enjoy a leisurely walk on the YN College campus and relax in the park. Great spot to watch everyday student life and soak up the atmosphere.\n   • Expense: Free\n   • Time Spent: 1 hour 30 mins\n\n6. **Local Handicrafts Market**\n   • Time: 15:00 - 16:30\n   • Activity: Experience live lace-making at the famous Narasapuram Lace & Handicrafts Market. Shop for unique handcrafted souvenirs.\n   • Expense: ₹500 (for souvenirs)\n   • Time Spent: 1 hour 30 mins\n\n7. **Coffee Break at Sarovar Tea and Snacks**\n   • Time: 16:30 - 17:15\n   • Activity: Take a break with a cup of chai or South Indian coffee, and sample local snacks such as Mirchi bajji.\n   • Expense: ₹80\n   • Time Spent: 45 mins\n\n8. **Perupalem Beach (Quick Visit)**\n   • Time: 17:15 - 18:00\n   • Activity: Wrap up your day with a refreshing trip to Perupalem Beach. Enjoy the sunset and coastal winds on the beautiful shoreline just outside town.\n   • Expense: ₹200 (auto/ride-share)\n   • Time Spent: 45 mins\n\nTotal Estimated Expense: ₹1130 (excluding optional shopping)\n\nNote: All spots are located within Narasapuram and are ideal for solo travellers. Convenient local transportation (like auto-rickshaws) is available throughout your day."
+            },
+            "refusal": null,
+            "annotations": []
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      }
+    ],
+    "Extract an itinerary1": [
+      {
+        "json": {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": {
+              "itinerary": [
+                {
+                  "order": 1,
+                  "time": "10:00 - 10:30",
+                  "destination": "Mission Hospital",
+                  "activity": "Explore the iconic Mission Hospital, known for its heritage building and community impact. Great for photos and understanding local history.",
+                  "estimated_expense": "Free",
+                  "estimated_time_spent": "30 mins"
+                },
+                {
+                  "order": 2,
+                  "time": "10:30 - 11:15",
+                  "destination": "Jyothi Printing Press",
+                  "activity": "Visit Jyothi Printing Press to see traditional printing techniques and the role of local businesses in Narasapuram’s development.",
+                  "estimated_expense": "₹50 (for a souvenir print)",
+                  "estimated_time_spent": "45 mins"
+                },
+                {
+                  "order": 3,
+                  "time": "11:15 - 12:15",
+                  "destination": "Taylor High School",
+                  "activity": "Walk through Taylor High School to witness the early educational backdrop of the area, and enjoy the old-school architecture (outside as a visitor).",
+                  "estimated_expense": "Free",
+                  "estimated_time_spent": "1 hour"
+                },
+                {
+                  "order": 4,
+                  "time": "12:15 - 13:30",
+                  "destination": "Lunch at Sri Krishna Family Restaurant",
+                  "activity": "Relish authentic Andhra cuisine such as fish curry, prawns fry, and local thali.",
+                  "estimated_expense": "₹300",
+                  "estimated_time_spent": "1 hour 15 mins"
+                },
+                {
+                  "order": 5,
+                  "time": "13:30 - 15:00",
+                  "destination": "YN College Campus & Park",
+                  "activity": "Stroll the expansive YN College campus; take a break at their park for people-watching and appreciating local student life.",
+                  "estimated_expense": "Free",
+                  "estimated_time_spent": "1 hour 30 mins"
+                },
+                {
+                  "order": 6,
+                  "time": "15:00 - 16:30",
+                  "destination": "Local Handicrafts Market",
+                  "activity": "Visit the Narasapuram Lace and Handicrafts Market. Experience live lace-making demonstrations and shop for exquisite souvenirs.",
+                  "estimated_expense": "₹500 (souvenirs)",
+                  "estimated_time_spent": "1 hour 30 mins"
+                },
+                {
+                  "order": 7,
+                  "time": "16:30 - 17:15",
+                  "destination": "Coffee break at Sarovar Tea and Snacks",
+                  "activity": "Relax with a chai or South Indian coffee and try local snacks (like Mirchi bajji).",
+                  "estimated_expense": "₹80",
+                  "estimated_time_spent": "45 mins"
+                },
+                {
+                  "order": 8,
+                  "time": "17:15 - 18:00",
+                  "destination": "Perupalem Beach (quick visit)",
+                  "activity": "End your day with a short trip to Perupalem Beach, just outside Narasapuram. Enjoy the sunset and coastal breeze.",
+                  "estimated_expense": "₹200 (auto/ride-share)",
+                  "estimated_time_spent": "45 mins"
+                }
+              ],
+              "total_estimated_expense": "₹1130 (excluding optional shopping)",
+              "note": "All locations are accessible within Narasapuram, and the itinerary is suited for solo travelers. Local transportation (auto-rickshaw) can be used if required."
+            },
+            "refusal": null,
+            "annotations": []
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Extract an itinerary1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message1": {
+      "main": [
+        [
+          {
+            "node": "Return1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown1": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract an itinerary1": {
+      "main": [
+        [
+          {
+            "node": "Format itinerary1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format itinerary1": {
+      "main": [
+        [
+          {
+            "node": "Markdown1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f2d85d04-0829-4851-812a-86107b9a49ba",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6e4f3c6fa2d6b5ff3de10887b8a72812e501652bd829d7d617baa084b97f0d27"
+  },
+  "id": "EDXWaM1eE8xB0AaJ",
+  "tags": []
+}
