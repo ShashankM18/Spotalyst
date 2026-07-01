@@ -112,14 +112,6 @@ spot-explorer/
 - `POST /api/spots/bulk` - Bulk insert spots
 
 
-## 🙏 Acknowledgments
-
-- [LocationIQ](https://locationiq.com/) for location search API
-- [Bootstrap](https://getbootstrap.com/) for UI components
-- [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) for database hosting
-- [React](https://reactjs.org/) for the amazing frontend framework
-
-
 ---
 
 ⭐ **Star this repository if you found it helpful!**
