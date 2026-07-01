@@ -112,14 +112,6 @@ spot-explorer/
 - `POST /api/spots/bulk` - Bulk insert spots
 
 
-
-## 👨‍💻 Author
-
-**Your Name**
-- GitHub: [@srikrishna1817](https://github.com/srikrishna)
-- LinkedIn: [Srikrishna Kasivajhula](https://www.linkedin.com/in/srikrishna-kasivajhula-4897732a7/)
-- Email: srikrishna1817@gmail.com
-
 ## 🙏 Acknowledgments
 
 - [LocationIQ](https://locationiq.com/) for location search API
